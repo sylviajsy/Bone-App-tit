@@ -53,7 +53,7 @@ const PlacesMap = ({ places,posts, handleOpenPost }) => {
                                     <PostCard 
                                         key={post.id}
                                         post={post}
-                                        onClick={() => handleOpenPost(post)}
+                                        onClick={() => handleOpenPost(post.id)}
                                     />
                                 ))}
                             </div>

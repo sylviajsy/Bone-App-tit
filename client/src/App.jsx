@@ -48,8 +48,21 @@ function App() {
     }  
   } 
 
-  const handleOpenPost = (post) => {
-    setSelectedPost(post);
+  const handleOpenPost = async(postId) => {
+    try {
+        const res = await fetch(`/api/posts/${postId}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.error || 'Failed to fetch post');
+        }
+
+        setSelectedPost(data);
+        console.log('Post', data);
+    } catch (error) {
+        console.error(error);
+        toast.error(error.message);
+    }  
   }
 
   const handleClosePost = () => {
@@ -68,7 +81,7 @@ function App() {
         />
 
       <PlacesMap places={places} posts={posts} handleOpenPost={handleOpenPost}/>
-      {selectedPost && <PostDetailPage posts={posts} handleClosePost={handleClosePost}/>}
+      {selectedPost && <PostDetailPage selectedPost={selectedPost} handleClosePost={handleClosePost}/>}
     </>
   )
 }
