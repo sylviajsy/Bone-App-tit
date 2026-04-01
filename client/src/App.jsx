@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { ToastContainer } from "react-toastify";
 import PlacesMap from './components/PlacesMap';
+import PostDetailPage from './components/PostDetailPage';
 import { useEffect } from 'react';
 
 function App() {
   const [places, setPlaces] = useState([]);
   const [posts, setPosts] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(null);
 
   useEffect(() => {
     loadPlaces();
@@ -43,9 +45,16 @@ function App() {
     } catch (error) {
       console.error(error);
       toast.error(error.message);
-  }
-    
+    }  
   } 
+
+  const handleOpenPost = (post) => {
+    setSelectedPost(post);
+  }
+
+  const handleClosePost = () => {
+    setSelectedPost(null);
+  };
 
   return (
     <>
@@ -58,7 +67,8 @@ function App() {
             }}
         />
 
-      <PlacesMap places={places} posts={posts}/>
+      <PlacesMap places={places} posts={posts} handleOpenPost={handleOpenPost}/>
+      {selectedPost && <PostDetailPage posts={posts} handleClosePost={handleClosePost}/>}
     </>
   )
 }

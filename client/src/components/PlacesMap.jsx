@@ -14,7 +14,7 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const PlacesMap = ({ places,posts }) => {
+const PlacesMap = ({ places,posts, handleOpenPost }) => {
     // Center US
     const defaultCenter = [39.8283, -98.5795]; 
 
@@ -53,6 +53,7 @@ const PlacesMap = ({ places,posts }) => {
                                     <PostCard 
                                         key={post.id}
                                         post={post}
+                                        onClick={() => handleOpenPost(post)}
                                     />
                                 ))}
                             </div>
