@@ -5,9 +5,11 @@ import { useEffect } from 'react';
 
 function App() {
   const [places, setPlaces] = useState([]);
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     loadPlaces();
+    loadPosts();
   },[])
 
   const loadPlaces = async () => {
@@ -20,11 +22,30 @@ function App() {
       }
 
       setPlaces(data);
+      console.log('Places', data);
     } catch (error) {
       console.error(error);
       toast.error(error.message);
     }
   }
+
+  const loadPosts = async () => {
+    try {
+      const res = await fetch('/api/posts');
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to fetch posts');
+      }
+
+      setPosts(data);
+      console.log('Posts', data);
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message);
+  }
+    
+  } 
 
   return (
     <>
@@ -37,7 +58,7 @@ function App() {
             }}
         />
 
-      <PlacesMap places={places} />
+      <PlacesMap places={places} posts={posts}/>
     </>
   )
 }

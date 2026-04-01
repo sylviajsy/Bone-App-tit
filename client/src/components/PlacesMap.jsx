@@ -1,5 +1,6 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import PostCard from './PostCard';
 
 import L from 'leaflet';
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -13,9 +14,13 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const PlacesMap = ({ places }) => {
+const PlacesMap = ({ places,posts }) => {
     // Center US
     const defaultCenter = [39.8283, -98.5795]; 
+
+    const getPostsForPlace = (placeId) => {
+        return posts.filter((post) => post.place_id === placeId);
+    };
 
   return (
     <MapContainer
@@ -28,7 +33,10 @@ const PlacesMap = ({ places }) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {places.map((place) => (
+        {places.map((place) => {
+            const placePosts = getPostsForPlace(place.id);
+
+            return(
             <Marker
                 key={place.id}
                 position={[Number(place.latitude), Number(place.longitude)]}>
@@ -37,10 +45,24 @@ const PlacesMap = ({ places }) => {
                         <h3>{place.name}</h3>
                         <p>{place.category}</p>
                         <p>{place.address}</p>
+
+                        <h4>Posts</h4>
+                        {placePosts.length>0 ? (
+                            <div className="post-card-container">
+                                {placePosts.map((post) =>(
+                                    <PostCard 
+                                        key={post.id}
+                                        post={post}
+                                    />
+                                ))}
+                            </div>
+                        ):(
+                            <p>No posts yet.</p>
+                        )}
                         </div>
                     </Popup>
             </Marker>
-        ))}
+        )})}
     
     </MapContainer>
   )
