@@ -31,4 +31,34 @@ router.get('/', async (req, res) => {
     }
 })
 
+// Get one post
+router.get('/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const result = await pool.query(`
+            SELECT
+                posts.id,
+                posts.title,
+                posts.author,
+                posts.content,
+                posts.pet_friendly_rating,
+                posts.created_at,
+                places.id AS place_id
+            FROM posts
+            JOIN places ON posts.place_id = places.id
+            WHERE posts.id = $1
+        `, [id])
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Post not found' });
+        }
+
+        res.json(result.rows[0]);
+    } catch (error){
+        console.error(error);
+        res.status(500).json({ error: "Failed to fetch posts" });
+    }
+})
+
 export default router;
