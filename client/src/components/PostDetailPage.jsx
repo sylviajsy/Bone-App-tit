@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import './PostDetailPage.scss'
 
 const PostDetailPage = ({ selectedPost,handleClosePost }) => {
 
@@ -18,7 +18,9 @@ const PostDetailPage = ({ selectedPost,handleClosePost }) => {
 
                 <h2 className="modal-title">{selectedPost.title}</h2>
                 <p className="modal-meta">
-                    By {selectedPost.author} · 🐾 {selectedPost.pet_friendly_rating}/5
+                    By {selectedPost.author}
+                    <br />
+                    🐾 {selectedPost.pet_friendly_rating}/5
                 </p>
 
                 <div className="modal-body">
