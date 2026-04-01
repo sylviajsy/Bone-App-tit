@@ -3,7 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 // Route imports
-// import exampleRouter from "./routes/example.js";
+import postRoutes from "./routes/posts.js";
 
 dotenv.config();
 
@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
 
 
 // API routes
-// app.use("/example", exampleRouter);
+app.use("/api/posts", postRoutes);
 
 
 // Export app for testing
