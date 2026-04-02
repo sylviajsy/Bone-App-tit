@@ -2,12 +2,14 @@ import { useState } from 'react'
 import { ToastContainer } from "react-toastify";
 import PlacesMap from './components/PlacesMap';
 import PostDetailPage from './components/PostDetailPage';
+import PostList from './components/PostList';
 import { useEffect } from 'react';
 
 function App() {
   const [places, setPlaces] = useState([]);
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [showList, setShowList] = useState(false);
 
   useEffect(() => {
     loadPlaces();
@@ -80,7 +82,23 @@ function App() {
             }}
         />
 
-      <PlacesMap places={places} posts={posts} handleOpenPost={handleOpenPost}/>
+      <div className="app-shell">
+            <button
+              className="toggle-list-btn"
+              onClick={() => setShowList((prev) => !prev)}
+            >
+              {showList ? 'Hide List' : 'Show List'}
+            </button>
+
+            <div className="map-background">
+              <PlacesMap places={places} posts={posts} handleOpenPost={handleOpenPost}/>
+            </div>
+
+            <div className={`list-drawer ${showList ? 'open' : ''}`}>
+              <PostList posts={posts} handleOpenPost={handleOpenPost} />
+            </div>
+      </div>
+
       {selectedPost && <PostDetailPage selectedPost={selectedPost} handleClosePost={handleClosePost}/>}
     </>
   )
