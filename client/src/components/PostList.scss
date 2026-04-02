@@ -1,0 +1,38 @@
+.post-list {
+  height: 100%;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 20px;
+  padding: 20px 18px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.post-list-header {
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ececec;
+  flex-shrink: 0;
+  color:black;
+
+  h2 {
+    color: #000000;
+    font-weight: 700;
+    margin: 0;
+  }
+}
+
+.post-list-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 4px;
+}

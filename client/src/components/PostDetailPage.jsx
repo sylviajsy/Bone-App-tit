@@ -1,4 +1,4 @@
-import './PostDetailPage.scss'
+import './PostDetailPage.scss';
 
 const PostDetailPage = ({ selectedPost,handleClosePost }) => {
 

@@ -1,8 +1,9 @@
-import PostCard from "./PostCard"
+import PostCard from "./PostCard";
+import './PostList.scss';
 
 const PostList = ({ posts,handleOpenPost }) => {
   return (
-    <div>
+    <div className="post-list">
       <div className="post-list-header">
         <h2>All Posts</h2>
         <p>{posts.length} posts</p>
