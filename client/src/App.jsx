@@ -4,6 +4,7 @@ import PlacesMap from './components/PlacesMap';
 import PostDetailPage from './components/PostDetailPage';
 import PostList from './components/PostList';
 import { useEffect } from 'react';
+import './App.scss';
 
 function App() {
   const [places, setPlaces] = useState([]);
