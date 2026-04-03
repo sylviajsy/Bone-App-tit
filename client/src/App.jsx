@@ -3,6 +3,7 @@ import { ToastContainer } from "react-toastify";
 import PlacesMap from './components/PlacesMap';
 import PostDetailPage from './components/PostDetailPage';
 import PostList from './components/PostList';
+import PostForm from './components/PostForm';
 import { useEffect } from 'react';
 import './App.scss';
 
@@ -11,6 +12,7 @@ function App() {
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [showList, setShowList] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     loadPlaces();
@@ -72,6 +74,34 @@ function App() {
     setSelectedPost(null);
   };
 
+  const onSubmit = async (formData) => {
+    if (formData.pet_friendly_rating < 1 || formData.pet_friendly_rating > 5) {
+        return toast.error("Rating must be between 1 and 5");
+    }
+
+    try {
+      const res = await fetch('/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to create post');
+      }
+
+      toast.success('Post added successfully! 🐾');
+      loadPosts();
+      loadPlaces();
+      setShowModal(false);
+    }catch (error) {
+        console.error(error);
+        toast.error(error.message);
+    }
+  }
+
   return (
     <>
       <ToastContainer 
@@ -91,6 +121,13 @@ function App() {
               {showList ? 'Hide List' : 'Show List'}
             </button>
 
+            <button
+              className="add-post-trigger-btn" 
+              onClick={() => setShowModal(true)}
+            >
+              + Add Review
+            </button>
+
             <div className="map-background">
               <PlacesMap places={places} posts={posts} handleOpenPost={handleOpenPost}/>
             </div>
@@ -101,6 +138,7 @@ function App() {
       </div>
 
       {selectedPost && <PostDetailPage selectedPost={selectedPost} handleClosePost={handleClosePost}/>}
+      {showModal && <PostForm onClose={() => setShowModal(false)} onSubmit={onSubmit}/>}
     </>
   )
 }
