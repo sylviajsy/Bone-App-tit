@@ -61,4 +61,67 @@ router.get('/:id', async (req, res) => {
     }
 })
 
+// Add a post
+router.post('/', async (req,res) => {
+    const {place_name, address, latitude, longitude, 
+        title, author, content, pet_friendly_rating, category_id} = req.body;
+    
+    const client = await pool.connect();
+
+    try {
+        await client.query('BEGIN');
+
+        const existingPlaceResult = await client.query(
+            `
+                SELECT *
+                FROM places
+                WHERE name = $1 AND address = $2
+            `,
+            [place_name, address]
+        );
+
+        let place;
+        let createdNewPlace = false;
+
+        if (existingPlaceResult.rows.length > 0) {
+            place = existingPlaceResult.rows[0];
+        } else {
+            const insertPlaceResult = await client.query(
+                `
+                    INSERT INTO places (name, address, latitude, longitude, category_id)
+                    VALUES ($1, $2, $3, $4, $5)
+                    RETURNING *
+                `,
+                [place_name, address, latitude, longitude, category_id]
+            );
+
+            place = insertPlaceResult.rows[0];
+            createdNewPlace = true;
+        }
+
+        const postResult = await client.query(
+            `
+                INSERT INTO posts (place_id, title, author, content, pet_friendly_rating)
+                VALUES ($1, $2, $3, $4, $5)
+                RETURNING *
+            `,
+            [place.id, title, author, content, pet_friendly_rating]
+        );
+
+        await client.query('COMMIT');
+
+        res.status(201).json({
+            createdNewPlace,
+            place,
+            post: postResult.rows[0],
+        });
+    } catch (error) {
+        await client.query("ROLLBACK");
+        console.error(error);
+        res.status(500).json({ error: error.message || "Failed to add post" });
+    } finally {
+        client.release();
+    }
+})
+
 export default router;
