@@ -15,10 +15,32 @@ const PostForm = ({ onClose, onSubmit }) => {
         latitude: '',
         longitude: '',
     });
+    const [searchInput, setSearchInput] = useState("");
+    const [suggestions, setSuggestions] = useState([]);
 
     useEffect(() => {
         loadCategories();
     },[]);
+
+    useEffect(() => {
+        const debounceTimer = setTimeout(async() => {
+            try {
+                const res = await fetch(`/api/geocode/autocomplete?text=${searchInput}`);
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.error || 'Failed to auto complete');
+                }
+
+                setSuggestions(data);
+            } catch (error) {
+                console.error(error);
+                toast.error(error.message);
+            }
+        }, 300);
+
+        return () => clearTimeout(debounceTimer);
+    },[searchInput]);
 
     const loadCategories = async () => {
         try {
@@ -35,6 +57,8 @@ const PostForm = ({ onClose, onSubmit }) => {
             toast.error(error.message);
         }
     };
+
+    const 
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -70,14 +94,6 @@ const PostForm = ({ onClose, onSubmit }) => {
             onClose();
         }
     };
-
-    // useEffect(() => {
-    //     const debounceTimer = setTimeout(() => {
-
-    //     }, 300);
-
-    //     return () => clearTimeout(debounceTimer);
-    // },[searchInput]);
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
