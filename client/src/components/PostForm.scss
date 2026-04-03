@@ -75,17 +75,6 @@
   transition: all 0.2s ease;
 }
 
-/* Find Location button */
-
-.add-post-form button[type="button"] {
-  background: #f3f4f6;
-  color: #374151;
-}
-
-.add-post-form button[type="button"]:hover {
-  background: #e5e7eb;
-}
-
 /* Submit button */
 
 .add-post-form button[type="submit"] {
@@ -98,7 +87,6 @@
 }
 
 /* disabled state */
-
 .add-post-form button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
