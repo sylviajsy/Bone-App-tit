@@ -23,6 +23,10 @@ const PostForm = ({ onClose, onSubmit }) => {
     },[]);
 
     useEffect(() => {
+        if (!searchInput || searchInput.trim().length === 0) {
+            setSuggestions([]);
+            return; 
+        }
         const debounceTimer = setTimeout(async() => {
             try {
                 const res = await fetch(`/api/geocode/autocomplete?text=${searchInput}`);
@@ -58,8 +62,6 @@ const PostForm = ({ onClose, onSubmit }) => {
         }
     };
 
-    const 
-
     const handleChange = (e) => {
         const { name, value } = e.target;
 
@@ -68,6 +70,20 @@ const PostForm = ({ onClose, onSubmit }) => {
             [name]: value,
         }));
     };
+
+    const handleSelectSuggestion = (place) => {
+        setSearchInput(place.name || place.address);
+
+        setFormData((prev) => ({
+            ...prev,
+            place_name: place.name || place.address,
+            address: place.address || '',
+            latitude: place.lat || '',
+            longitude: place.lon || '',
+        }));
+
+        setSuggestions([]);
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -109,16 +125,32 @@ const PostForm = ({ onClose, onSubmit }) => {
                     type="text"
                     name="place_name"
                     placeholder="Place name"
-                    value={formData.place_name}
-                    onChange={handleChange}
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
                 />
+
+                {suggestions.length>0 && (
+                    <div className="suggestions-dropdown">
+                        {suggestions.map((place, index) => (
+                            <button
+                                type="button"
+                                key={index}
+                                className="suggestion-item"
+                                onClick={() => handleSelectSuggestion(place)}
+                            >
+                                <p>{place.name}</p>
+                                <span>{place.address}</span>
+                            </button>
+                        ))}
+                    </div>
+                )}
 
                 <input
                     type="text"
                     name="address"
                     placeholder="Address"
                     value={formData.address}
-                    onChange={handleChange}
+                    readOnly
                 />
 
                 <select

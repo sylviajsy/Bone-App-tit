@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ToastContainer } from "react-toastify";
+import { toast } from 'react-toastify';
 import PlacesMap from './components/PlacesMap';
 import PostDetailPage from './components/PostDetailPage';
 import PostList from './components/PostList';
