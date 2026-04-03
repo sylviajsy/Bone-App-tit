@@ -27,6 +27,11 @@ const PostForm = ({ onClose, onSubmit }) => {
             setSuggestions([]);
             return; 
         }
+
+        if (searchInput === formData.place_name) {
+            return;
+        }
+        
         const debounceTimer = setTimeout(async() => {
             try {
                 const res = await fetch(`/api/geocode/autocomplete?text=${searchInput}`);
