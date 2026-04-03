@@ -53,6 +53,39 @@
   }
 }
 
+.add-post-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+
+  z-index: 2000;
+
+  padding: 14px 18px;
+  border: none;
+  border-radius: 999px;
+
+  background: #111827;
+  color: white;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+  transition: all 0.2s ease;
+}  
+
+.add-post-btn:hover {
+  transform: translateY(-2px);
+  background: #000;
+}
+
+.add-post-btn:active {
+  transform: scale(0.96);
+}
+
 @media (max-width: 640px) {
   .toggle-list-btn {
     top: 14px;
