@@ -4,7 +4,8 @@ import dotenv from "dotenv";
 
 // Route imports
 import postRoutes from "./routes/posts.js";
-import placeRoutes from "./routes/places.js"
+import placeRoutes from "./routes/places.js";
+import geocodeRoutes from "./routes/geocode.js";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.get("/", (req, res) => {
 // API routes
 app.use("/api/posts", postRoutes);
 app.use("/api/places", placeRoutes);
+app.use("/api/geocode", geocodeRoutes);
 
 // Export app for testing
 export default app;
