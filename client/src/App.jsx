@@ -122,7 +122,7 @@ function App() {
             </button>
 
             <button
-              className="add-post-trigger-btn" 
+              className="add-post-btn" 
               onClick={() => setShowModal(true)}
             >
               + Add Review

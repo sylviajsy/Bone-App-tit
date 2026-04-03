@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import './PostForm.scss';
 
 const PostForm = ({ onClose, onSubmit }) => {
     const [categories, setCategories] = useState([]);
