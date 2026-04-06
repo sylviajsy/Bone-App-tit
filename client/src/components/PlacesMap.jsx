@@ -48,11 +48,11 @@ const PlacesMap = ({ places, posts, handleOpenPost, fetchAiSummary, aiSummary, i
                         <p>{place.address}</p>
 
                         <div className="ai-section">
-                            {isAiLoading ? (
+                            {isAiLoading === place.id ? (
                                 <p className="loading-text">🐶 Woof! Sniffing insights...</p>
-                            ) : aiSummary ? ( 
+                            ) : aiSummary[place.id] ? ( 
                                 // aiSummary loaded, typing...
-                                <TypewriterSummary placeSummary={aiSummary} />
+                                <TypewriterSummary placeSummary={aiSummary[place.id]} />
                             ) : (
                                 // Initial: Display button
                                 <button 
