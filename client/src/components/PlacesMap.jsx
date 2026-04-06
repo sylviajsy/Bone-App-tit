@@ -1,6 +1,7 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import PostCard from './PostCard';
+import { TypewriterSummary } from './TypewriterSummary';
 
 import L from 'leaflet';
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -47,11 +48,15 @@ const PlacesMap = ({ places, posts, handleOpenPost, fetchAiSummary, aiSummary, i
                         <p>{place.address}</p>
 
                         <div className="ai-section">
-                            {aiSummary ? (
-                                <p>✨ {aiSummary}</p>
-                                ) : (
+                            {isAiLoading ? (
+                                <p className="loading-text">🐶 Woof! Sniffing insights...</p>
+                            ) : aiSummary ? ( 
+                                // aiSummary loaded, typing...
+                                <TypewriterSummary placeSummary={aiSummary} />
+                            ) : (
+                                // Initial: Display button
                                 <button onClick={() => fetchAiSummary(place.id)}>
-                                    {isAiLoading ? 'Loading...' : '✨ Get AI Summary' }
+                                    ✨ Get AI Summary
                                 </button>
                             )}
                         </div>
