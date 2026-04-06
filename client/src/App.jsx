@@ -106,7 +106,7 @@ function App() {
   }
 
   const fetchAiSummary = async (placeId) => {
-    setAiSummary(placeId);
+    setAiSummary("");
     setIsLoading(true);
 
     try {
@@ -122,7 +122,7 @@ function App() {
         console.error(error);
         toast.error(error.message);
     } finally {
-      setIsLoading(null);
+      setIsLoading(false);
     }
   }
 
