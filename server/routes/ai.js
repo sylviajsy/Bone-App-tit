@@ -29,6 +29,7 @@ router.get('/summarize/:placeId', async (req,res) => {
             - What people like the most
             - Any common complaints
             - Who would enjoy this place
+            - Do not makeup things not mentioned in reviews
 
             Make it sound like a helpful app summary (similar to Yelp).
             Avoid repeating individual reviews or listing points.
