@@ -12,7 +12,8 @@ export const TypewriterSummary = ({ placeSummary }) => {
 
         const interval = setInterval(() => {
             if (index < placeSummary.length){
-                setDisplayText((prev) => prev + placeSummary[index]);
+                const next = placeSummary.slice(0, index + 1);
+                setDisplayText(next);
                 index++;
             } else {
                 clearInterval(interval);
@@ -21,6 +22,9 @@ export const TypewriterSummary = ({ placeSummary }) => {
 
             return () => clearInterval(interval);
         }, [placeSummary]);
+
+        console.log('placeSummary prop =', placeSummary, typeof placeSummary);
+        console.log('displayText =', displayText);
 
   return (
     <div>
