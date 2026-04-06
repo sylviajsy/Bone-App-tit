@@ -11,10 +11,10 @@ export const TypewriterSummary = ({ placeSummary }) => {
         let index = 0;
 
         const interval = setInterval(() => {
-            setDisplayText((prev) => prev + placeSummary[index]);
-            index++;
-
-            if (index >= placeSummary.length) {
+            if (index < placeSummary.length){
+                setDisplayText((prev) => prev + placeSummary[index]);
+                index++;
+            } else {
                 clearInterval(interval);
             }
         }, 50);

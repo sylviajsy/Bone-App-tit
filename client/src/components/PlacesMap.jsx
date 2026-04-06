@@ -55,7 +55,11 @@ const PlacesMap = ({ places, posts, handleOpenPost, fetchAiSummary, aiSummary, i
                                 <TypewriterSummary placeSummary={aiSummary} />
                             ) : (
                                 // Initial: Display button
-                                <button onClick={() => fetchAiSummary(place.id)}>
+                                <button 
+                                type="button"
+                                onClick={(e) => {
+                                        e.stopPropagation();
+                                        fetchAiSummary(place.id)}}>
                                     ✨ Get AI Summary
                                 </button>
                             )}

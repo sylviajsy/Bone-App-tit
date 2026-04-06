@@ -15,7 +15,7 @@ function App() {
   const [showList, setShowList] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [aiSummary, setAiSummary] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(null);
 
   useEffect(() => {
     loadPlaces();
@@ -106,7 +106,7 @@ function App() {
   }
 
   const fetchAiSummary = async (placeId) => {
-    setAiSummary("");
+    setAiSummary(placeId);
     setIsLoading(true);
 
     try {
@@ -122,7 +122,7 @@ function App() {
         console.error(error);
         toast.error(error.message);
     } finally {
-      setIsLoading(false);
+      setIsLoading(null);
     }
   }
 
