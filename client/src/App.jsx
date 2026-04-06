@@ -15,6 +15,7 @@ function App() {
   const [showList, setShowList] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [aiSummary, setAiSummary] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     loadPlaces();
@@ -105,6 +106,9 @@ function App() {
   }
 
   const fetchAiSummary = async (placeId) => {
+    setAiSummary("");
+    setIsLoading(true);
+
     try {
       const res = await fetch(`/api/ai/summarize/${placeId}`);
 
@@ -117,6 +121,8 @@ function App() {
     } catch (error) {
         console.error(error);
         toast.error(error.message);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -147,7 +153,7 @@ function App() {
             </button>
 
             <div className="map-background">
-              <PlacesMap places={places} posts={posts} handleOpenPost={handleOpenPost} fetchAiSummary={fetchAiSummary} aiSummary={aiSummary}/>
+              <PlacesMap places={places} posts={posts} handleOpenPost={handleOpenPost} fetchAiSummary={fetchAiSummary} aiSummary={aiSummary} isAiLoading={isLoading}/>
             </div>
 
             <div className={`list-drawer ${showList ? 'open' : ''}`}>
