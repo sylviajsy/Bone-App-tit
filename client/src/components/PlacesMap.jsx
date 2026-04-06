@@ -14,7 +14,7 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const PlacesMap = ({ places,posts, handleOpenPost }) => {
+const PlacesMap = ({ places, posts, handleOpenPost, fetchAiSummary, aiSummary }) => {
     // Center US
     const defaultCenter = [39.8283, -98.5795]; 
 
@@ -45,6 +45,16 @@ const PlacesMap = ({ places,posts, handleOpenPost }) => {
                         <h3>{place.name}</h3>
                         <p>{place.category}</p>
                         <p>{place.address}</p>
+
+                        <div className="ai-section">
+                            {aiSummary ? (
+                                <p>✨ {aiSummary}</p>
+                                ) : (
+                                <button onClick={() => fetchAiSummary(place.id)}>
+                                    ✨ Get AI Summary
+                                </button>
+                            )}
+                        </div>
 
                         <h4>Posts</h4>
                         {placePosts.length>0 ? (

@@ -14,6 +14,7 @@ function App() {
   const [selectedPost, setSelectedPost] = useState(null);
   const [showList, setShowList] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [aiSummary, setAiSummary] = useState('');
 
   useEffect(() => {
     loadPlaces();
@@ -103,6 +104,22 @@ function App() {
     }
   }
 
+  const fetchAiSummary = async (placeId) => {
+    try {
+      const res = await fetch(`/api/ai/summarize/${placeId}`);
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to feth AI summary');
+      }
+
+      const data = await res.json();
+      setAiSummary(data.summary);
+    } catch (error) {
+        console.error(error);
+        toast.error(error.message);
+    }
+  }
+
   return (
     <>
       <ToastContainer 
@@ -130,7 +147,7 @@ function App() {
             </button>
 
             <div className="map-background">
-              <PlacesMap places={places} posts={posts} handleOpenPost={handleOpenPost}/>
+              <PlacesMap places={places} posts={posts} handleOpenPost={handleOpenPost} fetchAiSummary={fetchAiSummary} aiSummary={aiSummary}/>
             </div>
 
             <div className={`list-drawer ${showList ? 'open' : ''}`}>
