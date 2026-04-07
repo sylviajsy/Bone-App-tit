@@ -16,11 +16,28 @@ function App() {
   const [showModal, setShowModal] = useState(false);
   const [aiSummary, setAiSummary] = useState({});
   const [isLoadingPlaceId, setIsLoadingPlaceId] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
 
   useEffect(() => {
     loadPlaces();
     loadPosts();
   },[])
+
+  useEffect(() => {
+      navigator.geolocation.getCurrentPosition(
+          (position) => {
+              setUserLocation([
+                  position.coords.latitude,
+                  position.coords.longitude,
+              ]);
+          },
+          (error) => {
+              console.error(error);
+              // fallback to Center US
+              setUserLocation([39.8283, -98.5795]);
+          }
+      );
+  }, []);
 
   const loadPlaces = async () => {
     try {
@@ -166,7 +183,8 @@ function App() {
 
             <div className="map-background">
               <PlacesMap places={places} posts={posts} handleOpenPost={handleOpenPost} 
-                  fetchAiSummary={fetchAiSummary} aiSummary={aiSummary} isAiLoading={isLoadingPlaceId}/>
+                  fetchAiSummary={fetchAiSummary} aiSummary={aiSummary} isAiLoading={isLoadingPlaceId}
+                  userLocation={userLocation}/>
             </div>
 
             <div className={`list-drawer ${showList ? 'open' : ''}`}>

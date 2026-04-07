@@ -1,5 +1,7 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import { useMap } from 'react-leaflet';
+import { useEffect } from 'react';
 import PostCard from './PostCard';
 import { TypewriterSummary } from './TypewriterSummary';
 import './PlacesMap.scss';
@@ -16,20 +18,32 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const PlacesMap = ({ places, posts, handleOpenPost, fetchAiSummary, aiSummary, isAiLoading }) => {
-    // Center US
-    const defaultCenter = [39.8283, -98.5795]; 
+const PlacesMap = ({ places, posts, handleOpenPost, fetchAiSummary, aiSummary, isAiLoading, userLocation }) => {
+    const defaultCenter = [39.8283, -98.5795];
 
     const getPostsForPlace = (placeId) => {
         return posts.filter((post) => post.place_id === placeId);
     };
 
+    const RecenterMap = ({ location }) => {
+        const map = useMap();
+
+        useEffect(() => {
+            if (location) {
+            map.flyTo(location, 12, { duration: 1.2 });
+            }
+        }, [location, map]);
+
+        return null;
+    };
+
   return (
     <MapContainer
-        center={defaultCenter}
+        center={userLocation||defaultCenter}
         zoom={4}
         style={{ height: '600px', width: '100%' }}
     >
+        <RecenterMap location={userLocation} />
         <TileLayer
             attribution='&copy; OpenStreetMap contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
