@@ -51,4 +51,40 @@ router.get('/summarize/:placeId', async (req,res) => {
     }
 })
 
+router.post('/polish', async (req,res) => {
+    const { content } = req.body;
+
+    if (!content || content.length < 5) {
+        return res.status(400).json({ error: "Paw-lease add a bit more before we polish! 🐾" });
+    }
+
+    try {
+        const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+        const prompt = `
+            You are helping a user improve their review before posting for a pet-friendly yelp app.
+
+            Improve the clarity, flow, and readability of the review while keeping the original meaning and tone.
+
+            Rules:
+            - Do NOT add new information
+            - Do NOT change the meaning
+            - Keep it natural and friendly
+            - Fix grammar and wording
+            - Keep it concise
+
+            Reviews:
+            ${content}
+        `
+
+        const aiResult = await model.generateContent(prompt);
+        const response = await aiResult.response;
+        const text = response.text();
+
+        res.json({ polishedContent: text });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'AI is a bit tired...Please try later' });
+    }
+})
+
 export default router;
