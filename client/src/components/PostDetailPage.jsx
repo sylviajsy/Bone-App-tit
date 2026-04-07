@@ -12,7 +12,7 @@ const PostDetailPage = ({ selectedPost,handleClosePost }) => {
     <div>
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content">
-                <button className="modal-close-btn" onClick={handleClosePost}>
+                <button className="modal-close-btn" onClick={handleClosePost} aria-label='close'>
                     ×
                 </button>
 
@@ -20,7 +20,13 @@ const PostDetailPage = ({ selectedPost,handleClosePost }) => {
                 <p className="modal-meta">
                     By {selectedPost.author}
                     <br />
-                    🐾 {selectedPost.pet_friendly_rating}/5
+                    <span 
+                        role="img" 
+                        aria-label="Pet friendly rating:"
+                    >
+                        🐾
+                    </span>
+                    {selectedPost.pet_friendly_rating}/5
                 </p>
 
                 <div className="modal-body">
