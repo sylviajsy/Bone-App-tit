@@ -173,7 +173,7 @@ function App() {
               <PostList posts={posts} handleOpenPost={handleOpenPost} />
             </div>
       </div>
-
+      
       {selectedPost && <PostDetailPage selectedPost={selectedPost} handleClosePost={handleClosePost}/>}
       {showModal && <PostForm onClose={() => setShowModal(false)} onSubmit={onSubmit}/>}
     </>

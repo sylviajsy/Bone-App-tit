@@ -2,6 +2,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import PostCard from './PostCard';
 import { TypewriterSummary } from './TypewriterSummary';
+import './PlacesMap.scss';
 
 import L from 'leaflet';
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -41,8 +42,8 @@ const PlacesMap = ({ places, posts, handleOpenPost, fetchAiSummary, aiSummary, i
             <Marker
                 key={place.id}
                 position={[Number(place.latitude), Number(place.longitude)]}>
-                    <Popup>
-                        <div>
+                    <Popup className="place-popup">
+                        <div className="place-popup-header">
                         <h3>{place.name}</h3>
                         <p>{place.category}</p>
                         <p>{place.address}</p>
@@ -67,7 +68,7 @@ const PlacesMap = ({ places, posts, handleOpenPost, fetchAiSummary, aiSummary, i
 
                         <h4>Posts</h4>
                         {placePosts.length>0 ? (
-                            <div className="post-card-container">
+                            <div className="post-card-container popup-post-list">
                                 {placePosts.map((post) =>(
                                     <PostCard 
                                         key={post.id}
