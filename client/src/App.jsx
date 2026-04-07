@@ -1,119 +1,145 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { ToastContainer } from "react-toastify";
+import { toast } from 'react-toastify';
+import PlacesMap from './components/PlacesMap';
+import PostDetailPage from './components/PostDetailPage';
+import PostList from './components/PostList';
+import PostForm from './components/PostForm';
+import { useEffect } from 'react';
+import './App.scss';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [places, setPlaces] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [showList, setShowList] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    loadPlaces();
+    loadPosts();
+  },[])
+
+  const loadPlaces = async () => {
+    try {
+      const res = await fetch('/api/places');
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to fetch places');
+      }
+
+      setPlaces(data);
+      console.log('Places', data);
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message);
+    }
+  }
+
+  const loadPosts = async () => {
+    try {
+      const res = await fetch('/api/posts');
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to fetch posts');
+      }
+
+      setPosts(data);
+      console.log('Posts', data);
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message);
+    }  
+  } 
+
+  const handleOpenPost = async(postId) => {
+    try {
+        const res = await fetch(`/api/posts/${postId}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.error || 'Failed to fetch post');
+        }
+
+        setSelectedPost(data);
+        console.log('Post', data);
+    } catch (error) {
+        console.error(error);
+        toast.error(error.message);
+    }  
+  }
+
+  const handleClosePost = () => {
+    setSelectedPost(null);
+  };
+
+  const onSubmit = async (formData) => {
+    if (formData.pet_friendly_rating < 1 || formData.pet_friendly_rating > 5) {
+        return toast.error("Rating must be between 1 and 5");
+    }
+
+    try {
+      const res = await fetch('/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to create post');
+      }
+
+      toast.success('Post added successfully! 🐾');
+      loadPosts();
+      loadPlaces();
+      setShowModal(false);
+    }catch (error) {
+        console.error(error);
+        toast.error(error.message);
+    }
+  }
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      <ToastContainer 
+            position="top-center"
+            autoClose={3000}
+            toastStyle={{
+              marginTop: "40vh",
+              textAlign: "center"
+            }}
+        />
 
-      <div className="ticks"></div>
+      <div className="app-shell">
+            <button
+              className="toggle-list-btn"
+              onClick={() => setShowList((prev) => !prev)}
+            >
+              {showList ? 'Hide List' : 'Show List'}
+            </button>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+            <button
+              className="add-post-btn" 
+              onClick={() => setShowModal(true)}
+            >
+              + Add Review
+            </button>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+            <div className="map-background">
+              <PlacesMap places={places} posts={posts} handleOpenPost={handleOpenPost}/>
+            </div>
+
+            <div className={`list-drawer ${showList ? 'open' : ''}`}>
+              <PostList posts={posts} handleOpenPost={handleOpenPost} />
+            </div>
+      </div>
+
+      {selectedPost && <PostDetailPage selectedPost={selectedPost} handleClosePost={handleClosePost}/>}
+      {showModal && <PostForm onClose={() => setShowModal(false)} onSubmit={onSubmit}/>}
     </>
   )
 }
