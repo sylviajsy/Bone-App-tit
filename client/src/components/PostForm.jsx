@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import './PostForm.scss';
 
-const PostForm = ({ onClose, onSubmit }) => {
+const PostForm = ({ onClose, onSubmit, userLocation }) => {
     const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({
         title: '',
@@ -35,7 +35,14 @@ const PostForm = ({ onClose, onSubmit }) => {
         
         const debounceTimer = setTimeout(async() => {
             try {
-                const res = await fetch(`/api/geocode/autocomplete?text=${searchInput}`);
+                let url = `/api/geocode/autocomplete?text=${encodeURIComponent(searchInput)}`;
+
+                if (userLocation) {
+                    const [lat, lon] = userLocation;
+                    url += `&lat=${lat}&lon=${lon}`;
+                }
+
+                const res = await fetch(url);
                 const data = await res.json();
 
                 if (!res.ok) {

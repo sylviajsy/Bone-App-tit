@@ -193,7 +193,7 @@ function App() {
       </div>
       
       {selectedPost && <PostDetailPage selectedPost={selectedPost} handleClosePost={handleClosePost}/>}
-      {showModal && <PostForm onClose={() => setShowModal(false)} onSubmit={onSubmit}/>}
+      {showModal && <PostForm onClose={() => setShowModal(false)} onSubmit={onSubmit} userLocation={userLocation}/>}
     </>
   )
 }
