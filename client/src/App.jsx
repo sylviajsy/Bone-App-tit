@@ -95,6 +95,16 @@ function App() {
         throw new Error(data.error || 'Failed to create post');
       }
 
+      const placeId = data.place.id;
+
+      if (placeId) {
+        setAiSummary((prev) => {
+          const updated = { ...prev };
+          delete updated[placeId];
+          return updated;
+        });
+      }
+
       toast.success('Post added successfully! 🐾');
       loadPosts();
       loadPlaces();
