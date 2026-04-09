@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import PostForm from './PostForm';
 
-describe('Add Post', () => {
+describe('Add Post Integration Test', () => {
     const mockOnSubmit = vi.fn();
     const mockOnClose = vi.fn();
 
@@ -75,4 +75,15 @@ describe('Add Post', () => {
             }));
         });
     });
+
+    test('Overlay triggers onClose', async () => {
+        const user = userEvent.setup();
+
+        const { container } = render(<PostForm onClose={mockOnClose} onSubmit={mockOnSubmit} />);
+
+        const overlay = container.querySelector('.modal-overlay');
+        await user.click(overlay);
+
+        expect(mockOnClose).toHaveBeenCalled();
+    })
 })
