@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
-// import userEvent from '@testing-library/user-event';
-import { describe, test, expect, vi } from 'vitest';
+import { describe, test, expect } from 'vitest';
 import PostCard from './PostCard';
 
 describe('PostCard', () => {
@@ -19,5 +18,11 @@ describe('PostCard', () => {
         expect(screen.getByText('5/5')).toBeInTheDocument();
     });
 
-  
+    test('renders the pet rating emoji with accessibility label', () => {
+    render(<PostCard post={mockPost} onClick={() => {}} />);
+
+    expect(
+      screen.getByRole('img', { name: /pet friendly rating/i })
+    ).toBeInTheDocument();
+  });
 });
