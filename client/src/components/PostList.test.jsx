@@ -24,4 +24,10 @@ describe('PostList', () => {
         expect(screen.getByText('2 posts')).toBeInTheDocument();
     });
 
+    test('renders all posts', () => {
+        render(<PostList posts={posts} handleOpenPost={() => {}} />);
+
+        expect(screen.getByText('Post 1: Post One')).toBeInTheDocument();
+        expect(screen.getByText('Post 2: Post Two')).toBeInTheDocument();
+    });
 });
