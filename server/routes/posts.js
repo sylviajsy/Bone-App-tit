@@ -44,7 +44,9 @@ router.get('/:id', async (req, res) => {
                 posts.content,
                 posts.pet_friendly_rating,
                 posts.created_at,
-                places.id AS place_id
+                places.id AS place_id,
+                places.latitude,
+                places.longitude
             FROM posts
             JOIN places ON posts.place_id = places.id
             WHERE posts.id = $1
@@ -123,5 +125,66 @@ router.post('/', async (req,res) => {
         client.release();
     }
 })
+
+// Delete a post (also deletes the place if no place)
+router.delete('/:id', async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+        const { id } = req.params;
+
+        await client.query('BEGIN');
+
+        const postResult = await client.query(
+            `SELECT place_id FROM posts WHERE id = $1`,
+            [id]
+        );
+
+        if (postResult.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ error: 'Post not found' });
+        }
+
+        const placeId = postResult.rows[0].place_id;
+
+        // Delete post
+        await client.query(
+            `DELETE FROM posts WHERE id = $1`,
+            [id]
+        );
+
+        // Check if there's post in this place
+        const remainingPostsResult = await client.query(
+            `SELECT id FROM posts WHERE place_id = $1 LIMIT 1`,
+            [placeId]
+        );
+
+        // If not, delete place as well
+        let deletedPlace = false;
+
+        if (remainingPostsResult.rows.length === 0) {
+            await client.query(
+                `DELETE FROM places WHERE id = $1`,
+                [placeId]
+            );
+            deletedPlace = true;
+        }
+
+        await client.query('COMMIT');
+
+        return res.status(200).json({
+            message: 'Post deleted successfully',
+            deletedPlace,
+        });
+  } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('DELETE /posts/:id failed:', error);
+        return res.status(500).json({
+        error: 'Failed to delete post',
+        });
+  } finally {
+        client.release();
+  }
+});
 
 export default router;

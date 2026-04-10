@@ -17,6 +17,7 @@ function App() {
   const [aiSummary, setAiSummary] = useState({});
   const [isLoadingPlaceId, setIsLoadingPlaceId] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
+  const [mapCenter, setMapCenter] = useState(null);
 
   useEffect(() => {
     loadPlaces();
@@ -30,11 +31,16 @@ function App() {
                   position.coords.latitude,
                   position.coords.longitude,
               ]);
+              setMapCenter([
+                position.coords.latitude,
+                position.coords.longitude,
+              ])
           },
           (error) => {
               console.error(error);
               // fallback to Center US
               setUserLocation([39.8283, -98.5795]);
+              setMapCenter([39.8283, -98.5795]);
           }
       );
   }, []);
@@ -83,6 +89,10 @@ function App() {
         }
 
         setSelectedPost(data);
+
+        if (data.latitude && data.longitude) {
+            setMapCenter([Number(data.latitude), Number(data.longitude)]);
+        }
         console.log('Post', data);
     } catch (error) {
         console.error(error);
@@ -184,7 +194,7 @@ function App() {
             <div className="map-background">
               <PlacesMap places={places} posts={posts} handleOpenPost={handleOpenPost} 
                   fetchAiSummary={fetchAiSummary} aiSummary={aiSummary} isAiLoading={isLoadingPlaceId}
-                  userLocation={userLocation}/>
+                  userLocation={mapCenter} />
             </div>
 
             <div className={`list-drawer ${showList ? 'open' : ''}`}>

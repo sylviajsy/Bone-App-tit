@@ -1,0 +1,45 @@
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, test, expect, vi } from 'vitest';
+import PostList from './PostList';
+
+// mock PostCard
+vi.mock('./PostCard', () => ({
+  default: ({ post, onClick }) => (
+    <button onClick={onClick}>
+      Post {post.id}: {post.title}
+    </button>
+  ),
+}));
+
+describe('PostList', () => {
+    const posts = [
+        { id: 1, title: 'Post One' },
+        { id: 2, title: 'Post Two' },
+    ];
+
+    test('renders posts count', () => {
+        render(<PostList posts={posts} handleOpenPost={() => {}} />);
+
+        expect(screen.getByText('2 posts')).toBeInTheDocument();
+    });
+
+    test('renders all posts', () => {
+        render(<PostList posts={posts} handleOpenPost={() => {}} />);
+
+        expect(screen.getByText('Post 1: Post One')).toBeInTheDocument();
+        expect(screen.getByText('Post 2: Post Two')).toBeInTheDocument();
+    });
+
+    test('calls handleOpenPost with correct id when clicked', async () => {
+        const user = userEvent.setup();
+        const handleOpenPost = vi.fn();
+
+        render(<PostList posts={posts} handleOpenPost={handleOpenPost} />);
+
+        await user.click(screen.getByText('Post 1: Post One'));
+
+        expect(handleOpenPost).toHaveBeenCalledTimes(1);
+        expect(handleOpenPost).toHaveBeenCalledWith(1);
+    });
+});

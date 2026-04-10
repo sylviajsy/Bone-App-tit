@@ -30,9 +30,9 @@ const PlacesMap = ({ places, posts, handleOpenPost, fetchAiSummary, aiSummary, i
 
         useEffect(() => {
             if (location) {
-            map.flyTo(location, 12, { duration: 1.2 });
+                map.flyTo(location, 12, { duration: 1.2 });
             }
-        }, [location, map]);
+        }, [location]);
 
         return null;
     };
