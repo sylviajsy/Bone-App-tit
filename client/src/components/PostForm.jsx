@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import './PostForm.scss';
 
-const PostForm = ({ onClose, onSubmit }) => {
+const PostForm = ({ onClose, onSubmit, userLocation }) => {
     const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({
         title: '',
@@ -17,6 +17,7 @@ const PostForm = ({ onClose, onSubmit }) => {
     });
     const [searchInput, setSearchInput] = useState("");
     const [suggestions, setSuggestions] = useState([]);
+    const [isPolishing, setIsPolishing] = useState(false);
 
     useEffect(() => {
         loadCategories();
@@ -34,7 +35,14 @@ const PostForm = ({ onClose, onSubmit }) => {
         
         const debounceTimer = setTimeout(async() => {
             try {
-                const res = await fetch(`/api/geocode/autocomplete?text=${searchInput}`);
+                let url = `/api/geocode/autocomplete?text=${encodeURIComponent(searchInput)}`;
+
+                if (userLocation) {
+                    const [lat, lon] = userLocation;
+                    url += `&lat=${lat}&lon=${lon}`;
+                }
+
+                const res = await fetch(url);
                 const data = await res.json();
 
                 if (!res.ok) {
@@ -88,6 +96,38 @@ const PostForm = ({ onClose, onSubmit }) => {
         }));
 
         setSuggestions([]);
+    }
+
+    const handlePolish = async () => {
+        if (!formData.content) return;
+        setIsPolishing(true);
+
+        try {
+            const response = await fetch('/api/ai/polish', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: formData.content }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'AI is chasing a squirrel, try again!');
+            }
+
+            if (data.polishedContent){
+                setFormData(prev => ({
+                    ...prev,
+                    content: data.polishedContent
+                }));
+            } 
+
+        } catch (error) {
+            console.error(error);
+            toast.error(error.message);
+        } finally {
+            setIsPolishing(false);
+        }
     }
 
     const handleSubmit = (e) => {
@@ -203,6 +243,13 @@ const PostForm = ({ onClose, onSubmit }) => {
                     value={formData.pet_friendly_rating}
                     onChange={handleChange}
                 />
+
+                <button
+                    type="button" 
+                    className="polish-btn"
+                    onClick={handlePolish}>
+                    {isPolishing ? "✨ Paw-lease wait...Magic in progress..." : "✨ Polish with AI"}
+                </button>
 
                 <button type="submit">
                     Add

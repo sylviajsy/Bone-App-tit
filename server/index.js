@@ -7,11 +7,11 @@ import postRoutes from "./routes/posts.js";
 import placeRoutes from "./routes/places.js";
 import geocodeRoutes from "./routes/geocode.js";
 import categoriesRoutes from "./routes/categories.js";
+import aiRoutes from "./routes/ai.js"
 
 dotenv.config();
 
 const app = express();
-
 
 // Middleware
 app.use(cors());
@@ -23,12 +23,12 @@ app.get("/", (req, res) => {
  res.json({ message: "Server is running" });
 });
 
-
 // API routes
 app.use("/api/posts", postRoutes);
 app.use("/api/places", placeRoutes);
 app.use("/api/geocode", geocodeRoutes);
 app.use("/api/categories", categoriesRoutes);
+app.use("/api/ai", aiRoutes);
 
 // Export app for testing
 export default app;

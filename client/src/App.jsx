@@ -14,11 +14,30 @@ function App() {
   const [selectedPost, setSelectedPost] = useState(null);
   const [showList, setShowList] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [aiSummary, setAiSummary] = useState({});
+  const [isLoadingPlaceId, setIsLoadingPlaceId] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
 
   useEffect(() => {
     loadPlaces();
     loadPosts();
   },[])
+
+  useEffect(() => {
+      navigator.geolocation.getCurrentPosition(
+          (position) => {
+              setUserLocation([
+                  position.coords.latitude,
+                  position.coords.longitude,
+              ]);
+          },
+          (error) => {
+              console.error(error);
+              // fallback to Center US
+              setUserLocation([39.8283, -98.5795]);
+          }
+      );
+  }, []);
 
   const loadPlaces = async () => {
     try {
@@ -93,6 +112,16 @@ function App() {
         throw new Error(data.error || 'Failed to create post');
       }
 
+      const placeId = data.place.id;
+
+      if (placeId) {
+        setAiSummary((prev) => {
+          const updated = { ...prev };
+          delete updated[placeId];
+          return updated;
+        });
+      }
+
       toast.success('Post added successfully! 🐾');
       loadPosts();
       loadPlaces();
@@ -100,6 +129,29 @@ function App() {
     }catch (error) {
         console.error(error);
         toast.error(error.message);
+    }
+  }
+
+  const fetchAiSummary = async (placeId) => {
+    setIsLoadingPlaceId(placeId);
+
+    try {
+      const res = await fetch(`/api/ai/summarize/${placeId}`);
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to feth AI summary');
+      }
+
+      const data = await res.json();
+      setAiSummary((prev) => ({
+        ...prev,
+        [placeId]: data.summary,
+      }));
+    } catch (error) {
+        console.error(error);
+        toast.error(error.message);
+    } finally {
+      setIsLoadingPlaceId(null);
     }
   }
 
@@ -130,16 +182,18 @@ function App() {
             </button>
 
             <div className="map-background">
-              <PlacesMap places={places} posts={posts} handleOpenPost={handleOpenPost}/>
+              <PlacesMap places={places} posts={posts} handleOpenPost={handleOpenPost} 
+                  fetchAiSummary={fetchAiSummary} aiSummary={aiSummary} isAiLoading={isLoadingPlaceId}
+                  userLocation={userLocation}/>
             </div>
 
             <div className={`list-drawer ${showList ? 'open' : ''}`}>
               <PostList posts={posts} handleOpenPost={handleOpenPost} />
             </div>
       </div>
-
+      
       {selectedPost && <PostDetailPage selectedPost={selectedPost} handleClosePost={handleClosePost}/>}
-      {showModal && <PostForm onClose={() => setShowModal(false)} onSubmit={onSubmit}/>}
+      {showModal && <PostForm onClose={() => setShowModal(false)} onSubmit={onSubmit} userLocation={userLocation}/>}
     </>
   )
 }

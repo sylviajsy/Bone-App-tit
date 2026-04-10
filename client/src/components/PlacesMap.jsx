@@ -1,6 +1,10 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import { useMap } from 'react-leaflet';
+import { useEffect } from 'react';
 import PostCard from './PostCard';
+import { TypewriterSummary } from './TypewriterSummary';
+import './PlacesMap.scss';
 
 import L from 'leaflet';
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -14,20 +18,32 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const PlacesMap = ({ places,posts, handleOpenPost }) => {
-    // Center US
-    const defaultCenter = [39.8283, -98.5795]; 
+const PlacesMap = ({ places, posts, handleOpenPost, fetchAiSummary, aiSummary, isAiLoading, userLocation }) => {
+    const defaultCenter = [39.8283, -98.5795];
 
     const getPostsForPlace = (placeId) => {
         return posts.filter((post) => post.place_id === placeId);
     };
 
+    const RecenterMap = ({ location }) => {
+        const map = useMap();
+
+        useEffect(() => {
+            if (location) {
+            map.flyTo(location, 12, { duration: 1.2 });
+            }
+        }, [location, map]);
+
+        return null;
+    };
+
   return (
     <MapContainer
-        center={defaultCenter}
+        center={userLocation||defaultCenter}
         zoom={4}
         style={{ height: '600px', width: '100%' }}
     >
+        <RecenterMap location={userLocation} />
         <TileLayer
             attribution='&copy; OpenStreetMap contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -40,15 +56,33 @@ const PlacesMap = ({ places,posts, handleOpenPost }) => {
             <Marker
                 key={place.id}
                 position={[Number(place.latitude), Number(place.longitude)]}>
-                    <Popup>
-                        <div>
+                    <Popup className="place-popup">
+                        <div className="place-popup-header">
                         <h3>{place.name}</h3>
                         <p>{place.category}</p>
                         <p>{place.address}</p>
 
+                        <div className="ai-section">
+                            {isAiLoading === place.id ? (
+                                <p className="loading-text">🐶 Woof! Sniffing insights...</p>
+                            ) : aiSummary[place.id] ? ( 
+                                // aiSummary loaded, typing...
+                                <TypewriterSummary placeSummary={aiSummary[place.id]} />
+                            ) : (
+                                // Initial: Display button
+                                <button 
+                                type="button"
+                                onClick={(e) => {
+                                        e.stopPropagation();
+                                        fetchAiSummary(place.id)}}>
+                                    ✨ Get AI Summary
+                                </button>
+                            )}
+                        </div>
+
                         <h4>Posts</h4>
                         {placePosts.length>0 ? (
-                            <div className="post-card-container">
+                            <div className="post-card-container popup-post-list">
                                 {placePosts.map((post) =>(
                                     <PostCard 
                                         key={post.id}

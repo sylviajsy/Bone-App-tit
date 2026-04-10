@@ -4,16 +4,21 @@ const router = express.Router();
 
 router.get('/autocomplete', async (req,res) => {
     try {
-        const { text } = req.query;
+        const { text, lat, lon } = req.query;
 
         if (!text) {
             return res.status(400).json({ error:'Text is required'});
         }
 
+        if (!lat || !lon) {
+            lat = 39.8283;
+            lon = -98.5795;
+        }
+
         const url = `https://api.geoapify.com/v1/geocode/autocomplete` +
                     `?text=${encodeURIComponent(text)}` +
                     `&type=amenity` +
-                    `&bias=proximity:-119.4179,36.7783`+
+                    `&bias=proximity:${lon},${lat}`+
                     `&limit=5` +
                     `&format=json` +
                     `&apiKey=${process.env.GEOAPIFY_KEY}`;
