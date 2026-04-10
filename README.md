@@ -38,6 +38,8 @@ A full-stack web application that helps users discover and review pet-friendly p
 - Suggests real-world places as you type
 - Prioritizes results near the user's location
 
+https://github.com/user-attachments/assets/171e89ce-c483-4721-8b57-dd400d41681b
+
 ## 🏗️ Tech Stack
 ### Frontend
 - React (Vite)
