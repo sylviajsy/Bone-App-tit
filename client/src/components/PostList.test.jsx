@@ -30,4 +30,16 @@ describe('PostList', () => {
         expect(screen.getByText('Post 1: Post One')).toBeInTheDocument();
         expect(screen.getByText('Post 2: Post Two')).toBeInTheDocument();
     });
+
+    test('calls handleOpenPost with correct id when clicked', async () => {
+        const user = userEvent.setup();
+        const handleOpenPost = vi.fn();
+
+        render(<PostList posts={posts} handleOpenPost={handleOpenPost} />);
+
+        await user.click(screen.getByText('Post 1: Post One'));
+
+        expect(handleOpenPost).toHaveBeenCalledTimes(1);
+        expect(handleOpenPost).toHaveBeenCalledWith(1);
+    });
 });
