@@ -44,7 +44,9 @@ router.get('/:id', async (req, res) => {
                 posts.content,
                 posts.pet_friendly_rating,
                 posts.created_at,
-                places.id AS place_id
+                places.id AS place_id,
+                places.latitude,
+                places.longitude
             FROM posts
             JOIN places ON posts.place_id = places.id
             WHERE posts.id = $1
