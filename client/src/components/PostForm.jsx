@@ -172,6 +172,7 @@ const PostForm = ({ onClose, onSubmit, userLocation }) => {
                     placeholder="Place name"
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
+                    required
                 />
 
                 {suggestions.length>0 && (
@@ -196,6 +197,7 @@ const PostForm = ({ onClose, onSubmit, userLocation }) => {
                     placeholder="Address"
                     value={formData.address}
                     readOnly
+                    required
                 />
 
                 <select

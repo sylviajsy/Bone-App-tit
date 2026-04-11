@@ -1,3 +1,8 @@
+.Toastify__toast-container {
+  z-index: 10001 !important;
+  position: fixed;
+}
+
 .app-shell {
   position: relative;
   width: 100%;
